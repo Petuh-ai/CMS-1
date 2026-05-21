@@ -29,14 +29,24 @@ class Database
     private function connect()
     {
         try {
-            $dsn = sprintf(
-                '%s:host=%s;port=%d;dbname=%s;charset=%s',
-                $this->config['driver'],
-                $this->config['host'],
-                $this->config['port'],
-                $this->config['database'],
-                $this->config['charset']
-            );
+            // Различная синтаксис DSN для разных СУБД
+            if ($this->config['driver'] === 'pgsql') {
+                $dsn = sprintf(
+                    'pgsql:host=%s;port=%d;dbname=%s',
+                    $this->config['host'],
+                    $this->config['port'],
+                    $this->config['database']
+                );
+            } else {
+                // MySQL
+                $dsn = sprintf(
+                    'mysql:host=%s;port=%d;dbname=%s;charset=%s',
+                    $this->config['host'],
+                    $this->config['port'],
+                    $this->config['database'],
+                    $this->config['charset']
+                );
+            }
 
             $this->pdo = new PDO(
                 $dsn,
