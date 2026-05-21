@@ -8,7 +8,7 @@ RUN apt-get update && apt-get install -y libpq-dev libsqlite3-dev && \
 COPY . /var/www/html/
 
 # 3. Создаем папки и даем права (чтобы не было ошибки Logger.php)
-RUN mkdir -p /var/www/html/storage/logs && \
+RUN mkdir -p /var/www/html/storage/logs /var/www/html/public/uploads && \
     chmod -R 777 /var/www/html/storage && \
     chmod -R 777 /var/www/html/public/uploads
 
