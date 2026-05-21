@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: cms
+    runtime: docker
+    region: frankfurt
+    plan: free
+    
+    healthCheckPath: /
+    
+    envVars:
+      - key: APP_DEBUG
+        value: false
+      - key: APP_TIMEZONE
+        value: UTC
+      - key: LOG_LEVEL
+        value: info
+      - key: DB_DRIVER
+        value: mysql
+      - key: SESSION_SECURE
+        value: "true"
+    
+    dockerfilePath: ./Dockerfile
+
+  - type: mysql
+    name: cms-db
+    ipAllowList: []
+    plan: free
+    region: frankfurt
