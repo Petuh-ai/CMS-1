@@ -16,12 +16,12 @@ RUN mkdir -p /var/www/html/storage/logs /var/www/html/public/uploads && \
 RUN a2enmod rewrite
 
 # 5. Устанавливаем рабочую директорию для Apache
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # 6. Устанавливаем .htaccess для корректной маршрутизации
-RUN echo '<Directory /var/www/html/public>\n  Options -MultiViews\n  RewriteEngine On\n  RewriteCond %{REQUEST_FILENAME} !-f\n  RewriteCond %{REQUEST_FILENAME} !-d\n  RewriteRule ^ index.php [QSA,L]\n</Directory>' > /etc/apache2/conf-available/rewrite.conf && \
+RUN echo '<Directory /var/www/html>\n  Options -MultiViews\n  RewriteEngine On\n  RewriteCond %{REQUEST_FILENAME} !-f\n  RewriteCond %{REQUEST_FILENAME} !-d\n  RewriteRule ^ index.php [QSA,L]\n</Directory>' > /etc/apache2/conf-available/rewrite.conf && \
     a2enconf rewrite
 
 EXPOSE 80
