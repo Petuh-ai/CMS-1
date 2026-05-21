@@ -24,14 +24,14 @@ class Settings
     {
         // Проверяем, существует ли уже этот ключ
         $existing = $this->db->fetchOne(
-            "SELECT id FROM {$this->table} WHERE key = ? LIMIT 1",
+            "SELECT id FROM {$this->table} WHERE setting_key = ? LIMIT 1",
             [$key]
         );
 
         if ($existing) {
-            $this->db->update($this->table, ['value' => $value], 'key = ?', [$key]);
+            $this->db->update($this->table, ['value' => $value], 'setting_key = ?', [$key]);
         } else {
-            $this->db->insert($this->table, ['key' => $key, 'value' => $value]);
+            $this->db->insert($this->table, ['setting_key' => $key, 'value' => $value]);
         }
 
         self::$cache[$key] = $value;
@@ -47,7 +47,7 @@ class Settings
     {
         $settings = $this->db->fetchAll("SELECT * FROM {$this->table}");
         foreach ($settings as $setting) {
-            self::$cache[$setting['key']] = $setting['value'];
+            self::$cache[$setting['setting_key']] = $setting['value'];
         }
     }
 

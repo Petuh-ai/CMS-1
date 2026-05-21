@@ -72,21 +72,18 @@ SESSION_SECURE=true
 
 ## Шаг 6: Инициализация базы данных
 
-После первого развертывания нужно запустить миграции БД:
+После первого развертывания нужно создать таблицы в PostgreSQL и (опционально) администратора.
 
-### Вариант 1: Через веб-интерфейс
-1. Создайте файл `init-db.php` в `/public` папке
-2. Откройте `https://ваш-url-на-render.com/init-db.php`
-3. Удалите этот файл после выполнения
-
-### Вариант 2: Через bash/shell в Render
+### Вариант: Через bash/shell в Render
 1. На странице Web Service найдите **"Shell"**
 2. Выполните:
 ```bash
 cd /var/www/html
-php database/migrate.php
-php database/seed.php
+php scripts/init_postgres.php
+php scripts/seed_admin_postgres.php
 ```
+
+Если вы хотите запустить только инициализацию схемы, выполните только первую команду.
 
 ## Шаг 7: Проверка приложения
 

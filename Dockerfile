@@ -1,8 +1,8 @@
 FROM php:8.2-apache
 
-# 1. Устанавливаем нужные расширения для PostgreSQL и SQLite
-RUN apt-get update && apt-get install -y libpq-dev libsqlite3-dev && \
-    docker-php-ext-install pdo_pgsql pdo_sqlite
+# 1. Устанавливаем нужные расширения для MySQL и SQLite
+RUN apt-get update && apt-get install -y default-mysql-client libsqlite3-dev && \
+    docker-php-ext-install pdo_mysql pdo_sqlite
 
 # 2. Копируем файлы проекта
 COPY . /var/www/html/

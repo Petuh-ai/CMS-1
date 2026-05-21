@@ -15,7 +15,7 @@ services:
       - key: LOG_LEVEL
         value: info
       - key: DB_DRIVER
-        value: pgsql
+        value: mysql
       - key: SESSION_SECURE
         value: "true"
     
