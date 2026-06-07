@@ -86,18 +86,22 @@ class User
     public function ensureDefaultAdmin()
     {
         $existing = $this->findByEmail('admin@example.com');
-        if ($existing) {
+        if (!$existing) {
+            $this->create([
+                'name' => 'Администратор',
+                'email' => 'admin@example.com',
+                'password' => 'admin123',
+                'role' => 'admin',
+                'status' => 'active',
+            ]);
+
+            Logger::info('Default admin user created: admin@example.com / admin123');
             return;
         }
 
-        $this->create([
-            'name' => 'Администратор',
-            'email' => 'admin@example.com',
-            'password' => 'admin123',
-            'role' => 'admin',
-            'status' => 'active',
-        ]);
-
-        Logger::info('Default admin user created: admin@example.com / admin123');
+        if (!$this->verifyPassword($existing['id'], 'admin123')) {
+            $this->update($existing['id'], ['password' => 'admin123']);
+            Logger::warning('Default admin password reset for admin@example.com');
+        }
     }
 }
