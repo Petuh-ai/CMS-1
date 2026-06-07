@@ -7,10 +7,16 @@ RUN apt-get update && apt-get install -y default-mysql-client libsqlite3-dev && 
 # 2. Копируем файлы проекта
 COPY . /var/www/html/
 
-# 3. Создаем папки и даем права (чтобы не было ошибки Logger.php)
-RUN mkdir -p /var/www/html/storage/logs /var/www/html/public/uploads && \
+# 3. Копируем статические файлы из public в корневой веб-каталог
+RUN cp -r /var/www/html/public/css /var/www/html/css && \
+    cp -r /var/www/html/public/js /var/www/html/js && \
+    cp -r /var/www/html/public/uploads /var/www/html/uploads
+
+# 4. Создаем папки и даем права (чтобы не было ошибки Logger.php)
+RUN mkdir -p /var/www/html/storage/logs && \
     chmod -R 777 /var/www/html/storage && \
-    chmod -R 777 /var/www/html/public/uploads
+    chmod -R 777 /var/www/html/public/uploads && \
+    chmod -R 777 /var/www/html/uploads
 
 # 4. Включаем модуль Apache Rewrite (часто нужен для PHP сайтов)
 RUN a2enmod rewrite
