@@ -3,6 +3,39 @@
  * Главный файл приложения
  */
 
+// Загружаем переменные окружения из файла .env или .env.local
+$envPath = __DIR__ . '/.env';
+if (!file_exists($envPath)) {
+    $envPath = __DIR__ . '/.env.local';
+}
+if (file_exists($envPath)) {
+    foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || strpos($line, '#') === 0 || strpos($line, '=') === false) {
+            continue;
+        }
+
+        list($key, $value) = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim($value);
+
+        if ($key === '') {
+            continue;
+        }
+
+        if (preg_match('/^"(.*)"$/', $value, $matches) || preg_match('/^\'(.*)\'$/', $value, $matches)) {
+            $value = $matches[1];
+        }
+
+        if (!array_key_exists($key, $_ENV)) {
+            $_ENV[$key] = $value;
+        }
+        if (getenv($key) === false) {
+            putenv("$key=$value");
+        }
+    }
+}
+
 // Запуск сессии
 session_start();
 

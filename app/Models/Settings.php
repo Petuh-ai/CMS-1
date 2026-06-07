@@ -47,7 +47,10 @@ class Settings
     {
         $settings = $this->db->fetchAll("SELECT * FROM {$this->table}");
         foreach ($settings as $setting) {
-            self::$cache[$setting['setting_key']] = $setting['value'];
+            if (!isset($setting['setting_key'])) {
+                continue;
+            }
+            self::$cache[$setting['setting_key']] = $setting['value'] ?? null;
         }
     }
 
