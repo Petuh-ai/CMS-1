@@ -101,6 +101,24 @@ Router::post('/forgot-password', function() {
     (new AuthController())->sendResetLink();
 });
 
+Router::get('/debug', function() {
+    $config = require __DIR__ . '/config/database.php';
+    $db = new User();
+    $admin = $db->findByEmail('admin@example.com');
+
+    header('Content-Type: text/plain; charset=utf-8');
+    echo "APP_DEBUG=" . (getenv('APP_DEBUG') ?: 'false') . "\n";
+    echo "DB_DRIVER=" . $config['driver'] . "\n";
+    echo "DB_HOST=" . $config['host'] . "\n";
+    echo "DB_NAME=" . $config['database'] . "\n";
+    echo "DB_USER=" . $config['username'] . "\n";
+    echo "ADMIN_EXISTS=" . ($admin ? 'yes' : 'no') . "\n";
+    if ($admin) {
+        echo "ADMIN_ID=" . $admin['id'] . "\n";
+        echo "ADMIN_ROLE=" . $admin['role'] . "\n";
+    }
+});
+
 // Админ-панель
 Router::get('/admin/dashboard', function() {
     (new DashboardController())->index();
