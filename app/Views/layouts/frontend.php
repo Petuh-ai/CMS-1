@@ -6,7 +6,14 @@
     <meta name="description" content="<?php echo Security::escape($siteDescription ?? ''); ?>">
     <meta name="keywords" content="<?php echo Security::escape($siteKeywords ?? ''); ?>">
     <title><?php echo Security::escape($pageTitle ?? 'Home'); ?> - CMS</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="/css/frontend.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <header class="navbar">
@@ -14,15 +21,21 @@
             <div class="logo">
                 <h1><a href="/">CMS System</a></h1>
             </div>
-            <nav class="nav">
+
+            <button id="navToggle" class="nav-toggle" aria-label="Toggle navigation">☰</button>
+
+            <nav class="nav" id="mainNav">
                 <a href="#features">О сервисе</a>
                 <a href="#profiles">Анкеты</a>
                 <a href="#signup">Заполнить анкету</a>
+                <form action="/" method="GET" class="nav-search" role="search">
+                    <input type="search" name="q" placeholder="Поиск...">
+                </form>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <a href="/admin/dashboard">Панель</a>
-                    <a href="/logout">Выход</a>
+                    <a href="/admin/dashboard" class="btn btn-tertiary">Панель</a>
+                    <a href="/logout" class="btn btn-tertiary">Выход</a>
                 <?php else: ?>
-                    <a href="/login">Вход</a>
+                    <a href="/login" class="btn btn-primary">Вход</a>
                 <?php endif; ?>
             </nav>
         </div>

@@ -34,6 +34,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Mobile navigation toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const navToggle = document.getElementById('navToggle');
+    const mainNav = document.getElementById('mainNav');
+    if (navToggle && mainNav) {
+        navToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('open');
+            navToggle.classList.toggle('open');
+        });
+    }
+});
+
 // Функция удаления медиафайла
 function deleteMedia(id) {
     if (!confirm('Удалить этот файл?')) return;
