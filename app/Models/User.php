@@ -82,4 +82,22 @@ class User
         $result = $this->db->fetchOne("SELECT COUNT(*) as count FROM {$this->table}");
         return $result['count'] ?? 0;
     }
+
+    public function ensureDefaultAdmin()
+    {
+        $existing = $this->findByEmail('admin@example.com');
+        if ($existing) {
+            return;
+        }
+
+        $this->create([
+            'name' => 'Администратор',
+            'email' => 'admin@example.com',
+            'password' => 'admin123',
+            'role' => 'admin',
+            'status' => 'active',
+        ]);
+
+        Logger::info('Default admin user created: admin@example.com / admin123');
+    }
 }

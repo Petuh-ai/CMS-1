@@ -58,6 +58,13 @@ require_once __DIR__ . '/app/Models/Media.php';
 require_once __DIR__ . '/app/Models/Comment.php';
 require_once __DIR__ . '/app/Models/Settings.php';
 
+// Создаём дефолтного администратора, если ещё нет
+try {
+    (new User())->ensureDefaultAdmin();
+} catch (Exception $e) {
+    Logger::error('Admin seeding failed: ' . $e->getMessage());
+}
+
 // Подключаем middleware
 require_once __DIR__ . '/app/Middleware/AuthMiddleware.php';
 
