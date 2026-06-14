@@ -48,15 +48,23 @@ class Database
                 );
             }
 
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+            
+            // Добавляем опции для SSL если это MySQL
+            if ($this->config['driver'] === 'mysql') {
+                $options[PDO::MYSQL_ATTR_SSL_CA] = null;
+                $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
+            }
+            
             $this->pdo = new PDO(
                 $dsn,
                 $this->config['username'],
                 $this->config['password'],
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                ]
+                $options
             );
         } catch (PDOException $e) {
             Logger::error('Database connection failed: ' . $e->getMessage());
