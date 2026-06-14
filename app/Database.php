@@ -67,8 +67,13 @@ class Database
                 $options
             );
         } catch (PDOException $e) {
-            Logger::error('Database connection failed: ' . $e->getMessage());
-            throw new Exception('Ошибка подключения к базе данных');
+            $error = 'DB Connection Error: ' . $e->getMessage();
+            Logger::error($error);
+            // Выводим точную ошибку для отладки
+            die($error . "\n\nПараметры: Host=" . $this->config['host'] . 
+                ", Port=" . $this->config['port'] . 
+                ", DB=" . $this->config['database'] . 
+                ", User=" . $this->config['username']);
         }
     }
 
