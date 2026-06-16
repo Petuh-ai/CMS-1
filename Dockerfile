@@ -7,12 +7,17 @@ RUN apt-get update && apt-get install -y default-mysql-client libsqlite3-dev && 
 # 2. Копируем файлы проекта
 COPY . /var/www/html/
 
-# 3. Копируем статические файлы из public в корневой веб-каталог
+# 3. Если проект завершён в папке cms/, перемещаем его в корень
+RUN if [ -d /var/www/html/cms ]; then \
+      sh -c 'cd /var/www/html && mv cms/* . 2>/dev/null || true && mv cms/.[!.]* . 2>/dev/null || true && rm -rf cms'; \
+    fi
+
+# 4. Копируем статические файлы из public в корневой веб-каталог
 RUN cp -r /var/www/html/public/css /var/www/html/css && \
     cp -r /var/www/html/public/js /var/www/html/js && \
     cp -r /var/www/html/public/uploads /var/www/html/uploads
 
-# 4. Создаем папки и даем права (чтобы не было ошибки Logger.php)
+# 5. Создаем папки и даем права (чтобы не было ошибки Logger.php)
 RUN mkdir -p /var/www/html/storage/logs && \
     chmod -R 777 /var/www/html/storage && \
     chmod -R 777 /var/www/html/public/uploads && \
