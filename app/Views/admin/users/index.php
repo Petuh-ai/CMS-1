@@ -1,21 +1,23 @@
 <?php
-$pageTitle = 'Пользователи';
+AuthMiddleware::checkAuth();
+
+$pageTitle = 'Управление пользователями';
+$users = (new User())->getAll(50);
+
 ob_start();
 ?>
 
-<div class="users-page">
-    <div class="page-header">
-        <h2>Пользователи</h2>
-        <a href="/admin/users/create" class="btn btn-primary">Добавить пользователя</a>
-    </div>
+<h1>👥 Управление пользователями</h1>
 
+<a href="/admin/users/create" class="btn btn-primary" style="margin-bottom: 1.5rem;">➕ Добавить пользователя</a>
+
+<div class="card">
     <table class="table">
         <thead>
             <tr>
                 <th>Имя</th>
                 <th>Email</th>
                 <th>Роль</th>
-                <th>Статус</th>
                 <th>Дата регистрации</th>
                 <th>Действия</th>
             </tr>
@@ -23,31 +25,32 @@ ob_start();
         <tbody>
             <?php foreach ($users as $user): ?>
                 <tr>
-                    <td><?php echo Security::escape($user['name']); ?></td>
-                    <td><?php echo Security::escape($user['email']); ?></td>
-                    <td><?php echo Security::escape($user['role']); ?></td>
+                    <td><strong><?= Security::escape($user['name']) ?></strong></td>
+                    <td><?= Security::escape($user['email']) ?></td>
                     <td>
-                        <span class="badge badge-<?php echo $user['status']; ?>">
-                            <?php echo $user['status'] === 'active' ? 'Активен' : 'Неактивен'; ?>
+                        <span style="display: inline-block; padding: 0.25rem 0.75rem; background: <?= $user['role'] === 'admin' ? '#dbeafe' : '#dcfce7' ?>; color: <?= $user['role'] === 'admin' ? '#0c4a6e' : '#166534' ?>; border-radius: var(--radius-sm); font-size: 0.875rem;">
+                            <?= ucfirst($user['role']) ?>
                         </span>
                     </td>
-                    <td><?php echo date('d.m.Y', strtotime($user['created_at'])); ?></td>
+                    <td><?= date('d.m.Y', strtotime($user['created_at'])) ?></td>
                     <td>
-                        <a href="/admin/users/<?php echo $user['id']; ?>/edit" class="btn-link">Редактировать</a>
-                        <a href="/admin/users/<?php echo $user['id']; ?>/delete" class="btn-link btn-danger"
-                           onclick="return confirm('Вы уверены?');">Удалить</a>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <a href="/admin/users/<?= $user['id'] ?>/edit" class="btn btn-sm btn-primary">Редактировать</a>
+                            <?php if ($user['id'] != $_SESSION['user_id']): ?>
+                                <a href="/admin/users/<?= $user['id'] ?>/delete" class="btn btn-sm btn-danger" onclick="return confirm('Удалить?');">Удалить</a>
+                            <?php endif; ?>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+</div>
 
-    <!-- Пагинация -->
-    <?php if ($totalPages > 1): ?>
-        <div class="pagination">
-            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                <?php if ($i == $page): ?>
-                    <span class="current"><?php echo $i; ?></span>
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../../layouts/admin.php';
+?>
                 <?php else: ?>
                     <a href="/admin/users?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                 <?php endif; ?>

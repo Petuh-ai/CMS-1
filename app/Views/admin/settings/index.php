@@ -1,53 +1,76 @@
 <?php
+AuthMiddleware::checkAuth();
+
 $pageTitle = 'Настройки';
+$settingsModel = new Settings();
+$settings = $settingsModel->getAll() ?? [];
+
 ob_start();
 ?>
 
-<div class="settings-page">
-    <h2>Настройки системы</h2>
+<h1>⚙️ Настройки системы</h1>
 
-    <form method="POST" action="/admin/settings" class="form-full">
-        <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
+<div class="card" style="max-width: 800px;">
+    <form method="POST" action="/admin/settings">
+        <input type="hidden" name="csrf_token" value="<?= Security::generateCSRFToken() ?>">
 
-        <fieldset>
-            <legend>Основные настройки</legend>
+        <fieldset style="border: none; padding: 0; margin-bottom: 2rem;">
+            <legend style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">📌 Основные настройки</legend>
 
-            <div class="form-group">
-                <label for="site_title">Название сайта:</label>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="site_title" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Название сайта</label>
                 <input type="text" id="site_title" name="site_title" 
-                       value="<?php echo Security::escape($settings['site_title'] ?? ''); ?>">
+                       value="<?= Security::escape($settings['site_title'] ?? 'CMS') ?>"
+                       style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md);">
             </div>
 
-            <div class="form-group">
-                <label for="site_description">Описание:</label>
-                <textarea id="site_description" name="site_description" rows="5"><?php echo Security::escape($settings['site_description'] ?? ''); ?></textarea>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="site_description" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Описание сайта</label>
+                <textarea id="site_description" name="site_description" rows="4"
+                          style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md);"><?= Security::escape($settings['site_description'] ?? '') ?></textarea>
             </div>
 
-            <div class="form-group">
-                <label for="site_keywords">Ключевые слова:</label>
+            <div style="margin-bottom: 1.5rem;">
+                <label for="site_keywords" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Ключевые слова (через запятую)</label>
                 <input type="text" id="site_keywords" name="site_keywords" 
-                       value="<?php echo Security::escape($settings['site_keywords'] ?? ''); ?>">
+                       value="<?= Security::escape($settings['site_keywords'] ?? '') ?>"
+                       style="width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-md);">
             </div>
         </fieldset>
 
-        <fieldset>
-            <legend>Комментарии</legend>
+        <fieldset style="border: none; padding: 0; margin-bottom: 2rem;">
+            <legend style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem;">💬 Комментарии</legend>
 
-            <div class="form-group">
-                <label>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
                     <input type="checkbox" name="enable_comments" value="1"
-                        <?php echo (isset($settings['enable_comments']) && $settings['enable_comments']) ? 'checked' : ''; ?>>
-                    Включить комментарии
+                        <?= (isset($settings['enable_comments']) && $settings['enable_comments']) ? 'checked' : '' ?>
+                        style="margin-right: 0.5rem;">
+                    <span>Включить комментарии на сайте</span>
                 </label>
             </div>
 
-            <div class="form-group">
-                <label>
+            <div style="margin-bottom: 1rem;">
+                <label style="display: flex; align-items: center; cursor: pointer;">
                     <input type="checkbox" name="comments_moderation" value="1"
-                        <?php echo (isset($settings['comments_moderation']) && $settings['comments_moderation']) ? 'checked' : ''; ?>>
-                    Модерация комментариев
+                        <?= (isset($settings['comments_moderation']) && $settings['comments_moderation']) ? 'checked' : '' ?>
+                        style="margin-right: 0.5rem;">
+                    <span>Требовать модерацию комментариев</span>
                 </label>
             </div>
+        </fieldset>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-primary">💾 Сохранить настройки</button>
+            <a href="/admin/dashboard" class="btn btn-secondary">↩️ Отмена</a>
+        </div>
+    </form>
+</div>
+
+<?php
+$content = ob_get_clean();
+require __DIR__ . '/../../layouts/admin.php';
+?>
         </fieldset>
 
         <fieldset>
