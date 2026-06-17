@@ -21,7 +21,7 @@ class DashboardController
         // Собираем статистику
         $totalPosts = $postModel->count();
         $totalUsers = $userModel->count();
-        $totalComments = $commentModel->count('posts');
+        $totalComments = $commentModel->count();
         $totalCategories = $categoryModel->count();
         
         // Получаем последние посты
