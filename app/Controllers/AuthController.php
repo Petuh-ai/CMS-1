@@ -18,6 +18,60 @@ class AuthController
         require __DIR__ . '/../Views/auth/login.php';
     }
 
+    public function registerPage()
+    {
+        AuthMiddleware::checkGuest();
+        require __DIR__ . '/../Views/auth/register.php';
+    }
+
+    public function register()
+    {
+        AuthMiddleware::checkGuest();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+
+        if (!isset($_POST['csrf_token']) || !Security::verifyCSRFToken($_POST['csrf_token'])) {
+            die('CSRF токен недействителен');
+        }
+
+        $login = trim($_POST['login'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        $validator = new Validator($_POST);
+        if (!$validator->validate([
+            'login' => 'required|min:3|unique:users,name',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6|confirmed',
+        ])) {
+            $errors = $validator->getErrors();
+            require __DIR__ . '/../Views/auth/register.php';
+            return;
+        }
+
+        $userId = $this->userModel->create([
+            'name' => $login,
+            'email' => $email,
+            'password' => $password,
+            'role' => 'author',
+            'status' => 'active',
+        ]);
+
+        $user = $this->userModel->findById($userId);
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_name'] = $user['name'];
+        $_SESSION['user_role'] = $user['role'];
+
+        Logger::info("New user registered: {$user['email']}");
+
+        header('Location: /admin/dashboard');
+        exit;
+    }
+
     public function login()
     {
         AuthMiddleware::checkGuest();
@@ -27,18 +81,16 @@ class AuthController
             return;
         }
 
-        // Проверяем CSRF токен
         if (!isset($_POST['csrf_token']) || !Security::verifyCSRFToken($_POST['csrf_token'])) {
             die('CSRF токен недействителен');
         }
 
-        $email = $_POST['email'] ?? '';
+        $login = trim($_POST['login'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        // Валидируем
         $validator = new Validator($_POST);
         if (!$validator->validate([
-            'email' => 'required|email',
+            'login' => 'required',
             'password' => 'required|min:6',
         ])) {
             $errors = $validator->getErrors();
@@ -46,23 +98,21 @@ class AuthController
             return;
         }
 
-        // Ищем пользователя
-        $user = $this->userModel->findByEmail($email);
+        $user = $this->userModel->findByLogin($login);
         if (!$user) {
-            Logger::warning("Login failed: user not found for email {$email}");
-            $errors = ['auth' => ['Неверный email или пароль']];
+            Logger::warning("Login failed: user not found for login {$login}");
+            $errors = ['auth' => ['Неверный логин или пароль']];
             require __DIR__ . '/../Views/auth/login.php';
             return;
         }
 
         if (!Security::verifyPassword($password, $user['password'])) {
-            Logger::warning("Login failed: password mismatch for email {$email}");
-            $errors = ['auth' => ['Неверный email или пароль']];
+            Logger::warning("Login failed: password mismatch for login {$login}");
+            $errors = ['auth' => ['Неверный логин или пароль']];
             require __DIR__ . '/../Views/auth/login.php';
             return;
         }
 
-        // Логин успешен
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name'] = $user['name'];

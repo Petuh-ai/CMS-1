@@ -28,9 +28,9 @@
                 <input type="hidden" name="csrf_token" value="<?php echo Security::generateCSRFToken(); ?>">
 
                 <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required 
-                           value="<?php echo Security::escape($_POST['email'] ?? ''); ?>">
+                    <label for="login">Email или имя пользователя:</label>
+                    <input type="text" id="login" name="login" required 
+                           value="<?php echo Security::escape($_POST['login'] ?? ''); ?>">
                 </div>
 
                 <div class="form-group">
@@ -38,11 +38,13 @@
                     <input type="password" id="password" name="password" required>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Вход</button>
+                <button type="submit" class="btn btn-primary">Войти</button>
             </form>
 
             <p class="form-footer">
                 <a href="/forgot-password">Забыли пароль?</a>
+                <br>
+                <a href="/register">Нет аккаунта? Зарегистрироваться</a>
             </p>
         </div>
     </div>

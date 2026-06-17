@@ -50,6 +50,14 @@ class User
         );
     }
 
+    public function findByLogin($login)
+    {
+        return $this->db->fetchOne(
+            "SELECT * FROM {$this->table} WHERE email = ? OR name = ? LIMIT 1",
+            [$login, $login]
+        );
+    }
+
     public function getAll($limit = null, $offset = 0)
     {
         $sql = "SELECT * FROM {$this->table} ORDER BY created_at DESC";

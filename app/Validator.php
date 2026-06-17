@@ -61,8 +61,13 @@ class Validator
                 break;
 
             case 'unique':
-                if ($value && $this->isNotUnique($param, $field, $value)) {
-                    $this->addError($field, "Это значение уже используется");
+                if ($value) {
+                    $parts = explode(',', $param);
+                    $table = $parts[0] ?? null;
+                    $column = $parts[1] ?? $field;
+                    if ($this->isNotUnique($table, $column, $value)) {
+                        $this->addError($field, "Это значение уже используется");
+                    }
                 }
                 break;
 

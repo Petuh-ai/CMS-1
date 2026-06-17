@@ -89,6 +89,14 @@ Router::post('/login', function() {
     (new AuthController())->login();
 });
 
+Router::get('/register', function() {
+    (new AuthController())->registerPage();
+});
+
+Router::post('/register', function() {
+    (new AuthController())->register();
+});
+
 Router::get('/logout', function() {
     (new AuthController())->logout();
 });
