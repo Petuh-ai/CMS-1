@@ -50,6 +50,7 @@ require_once __DIR__ . '/app/Validator.php';
 require_once __DIR__ . '/app/Security.php';
 require_once __DIR__ . '/app/Router.php';
 require_once __DIR__ . '/app/DatabaseMigration.php';
+require_once __DIR__ . '/app/DemoDataSeeder.php';
 
 // Подключаем модели
 require_once __DIR__ . '/app/Models/User.php';
@@ -71,6 +72,15 @@ try {
     (new User())->ensureDefaultAdmin();
 } catch (Exception $e) {
     Logger::error('Admin seeding failed: ' . $e->getMessage());
+}
+
+// Создаём демо-контент, если его ещё нет
+try {
+    if (getenv('SEED_DEMO_DATA') !== 'false') {
+        (new DemoDataSeeder())->seed();
+    }
+} catch (Exception $e) {
+    Logger::error('Demo data seeding failed: ' . $e->getMessage());
 }
 
 // Подключаем middleware
